@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dress Shop Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: black;
+      color: white;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 12px 20px;
+      background-color: #111;
+      gap: 10px;
+    }
+
+    .top-bar span {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .name {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Great Vibes", cursive;
+      font-size: 28px;
+      font-weight: bold;
+      background-color: #111;
+      padding: 8px 15px;
+      border-bottom: 1px solid #333;
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #FFD700, #FF8C00, #FF4500, #FFD700);
+      background-clip: text;
+-webkit-background-clip: text;
+
+      
+      -webkit-text-fill-color: transparent;
+      background-size: 300% 300%;
+      animation: gradientMove 5s ease infinite;
+      text-shadow: 0 0 3px rgba(255, 215, 0, 0.6);
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 10px 0 15px;
+    }
+
+    .category-btn {
+      padding: 8px 16px;
+      background-color: gold;
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .category-btn:hover {
+      background-color: #ffcc00;
+      transform: scale(1.05);
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+      gap: 8px;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      width: 60%;
+      border: none;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 8px 12px;
+      background-color: gold;
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .banner {
+      width: 100%;
+      background-color: #f0f0f0;
+      height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .banner img {
+      max-height: 50vh;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+
+
+.product {
+  background: #222;
+  border-radius: 8px;
+  padding: 15px;
+  width: 180px;
+  height: 320px;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+    .product:hover {
+      transform: scale(1.05);
+    }
+
+.product img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+   .product h3 {
+  font-size: 15px;
+  margin: 8px 0 4px;
+}
+
+.product p {
+  font-size: 14px;
+  color: gold;
+  font-weight: bold;
+}
+
+
+    #goBackBtn {
+      display: none;
+      margin-top: 25px;
+      padding: 10px 20px;
+      background: gold;
+      color: black;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+.results-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 30px;
+  justify-content: center;
+
+  display: none; /* keep hidden initially */
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <span onclick="goToFavourites()">❤️</span>
+    <span onclick="goToProfile()">👤</span>
+    <span onclick="goToCart()">🛒</span>
+  </div>
+
+  <!-- Website Name -->
+  <div class="name">
+    <h1>Dressify</h1>
+  </div>
+
+  <!-- Categories -->
+  <div class="categories">
+    <a href="men.html" class="category-btn">Men</a>
+    <a href="women.html" class="category-btn">Women</a>
+    <a href="kids.html" class="category-btn">Kids</a>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search products...">
+    <button onclick="searchProducts()">Search</button>
+    <button id="goBackBtn" onclick="goBack()">Go Back</button>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner">
+    <img src="images/ad.gif" alt="ad">
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-container" id="results"></div>
+
+  <script>
+    function goToProfile() {
+      window.location.href = "profile.html";
+    }
+    function goToFavourites() {
+      window.location.href = "favourites.html";
+    }
+    function goToCart() {
+      window.location.href = "cart.html";
+    }
+
+    const products = [
+      { name: "Jacket", price: "₹799", image: "images/men/men1.jpg" },
+      { name: "men-kurta set", price: "₹899", image: "images/men/men2.jpg" },
+      { name: "Brown jacket", price: "₹499", image: "images/men/men3.jpg" },
+      { name: "checked blazer", price: "₹799", image: "images/men/men4.jpg" },
+      { name: "gray blazer set", price: "₹899", image: "images/men/men5.jpg" },
+      { name: "kurta", price: "₹499", image: "images/men/men6.jpg" },
+      { name: "formal", price: "₹499", image: "images/men/men7.jpg" },
+      { name: "peach kurta", price: "₹799", image: "images/men/men8.jpg" },
+      { name: "baggy pant", price: "₹899", image: "images/men/men9.jpg" },
+      { name: "function wear", price: "₹499", image: "images/men/men10.jpg" },
+
+      { name: "Dress 1", price: "₹1299", image: "images/women/women1.jpg" },
+      { name: "Dress 2", price: "₹1399", image: "images/women/women2.jpg" },
+      { name: "Kids Wear 1", price: "₹599", image: "images/kids/kids1.jpg" },
+      { name: "Kids Wear 2", price: "₹699", image: "images/kids/kids2.jpg" }
+    ];
+
+    function searchProducts() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+      resultsContainer.style.display = 'grid';
+      document.getElementById('goBackBtn').style.display = 'inline-block';
+
+      if (!query) {
+        resultsContainer.innerHTML = '<p>Please enter a keyword.</p>';
+        return;
+      }
+
+      const filtered = products.filter(product => product.name.toLowerCase().includes(query));
+      
+      if (filtered.length === 0) {
+        resultsContainer.innerHTML = '<p>No products found.</p>';
+        return;
+      }
+
+      filtered.forEach(product => {
+        const div = document.createElement('div');
+        div.classList.add('product');
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p>${product.price}</p>
+        `;
+        div.addEventListener('click', () => {
+          localStorage.setItem('selectedProduct', JSON.stringify(product));
+          window.location.href = 'product-details-men.html'; // or dynamic based on category
+        });
+        resultsContainer.appendChild(div);
+      });
+    }
+
+    function goBack() {
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('goBackBtn').style.display = 'none';
+      document.getElementById('searchInput').value = '';
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Women's Collection</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: gold;
+    }
+        #productsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+.product {
+  background: #222;
+  border-radius: 8px;
+  padding: 15px;
+  position: relative;
+  transition: transform 0.2s;
+  cursor: pointer;
+  aspect-ratio: 3 / 4;
+             /* FIXED CARD HEIGHT */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+    .product:hover {
+      transform: scale(1.05);
+    }
+    .product img {
+  width: 100%;
+  height: 180px;       /* FIXED IMAGE HEIGHT */
+  object-fit: cover;  /* crops image properly */
+  border-radius: 8px;
+}
+
+.product h3 {
+  font-size: 16px;
+  margin: 8px 0 4px;
+}
+
+.product p {
+  font-size: 15px;
+  color: gold;
+  font-weight: bold;
+}
+    .fav-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: white;
+    }
+    .fav-btn.active {
+      color: red;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: gold;
+      color: black;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+  .back-btn-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 16px;
+  background: gold;
+  color: black;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 1000;
+    }
+
+     .top-bar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+.top-bar span {
+  margin-left: 10px;
+}
+
+
+  </style>
+</head>
+<body>
+  <h1>Women's Collection</h1>
+
+    <div class="top-bar">
+  <span onclick="goToFavourites()">❤️  |</span>
+  <span onclick="goToProfile()">👤  |</span>
+  <span onclick="goToCart()">🛒</span>
+</div>
+
+  <!-- Products -->
+  <div id="productsContainer">
+    <div class="product" data-name="lavender kurti set" data-price="₹1,299" data-image="images/women/women1.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women1.jpg" alt="lavender kurti set">
+      <h3>lavender kurti set</h3>
+      <p>₹1,299</p>
+    </div>
+
+    <div class="product" data-name="casual wear" data-price="₹1,499" data-image="images/women/women2.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women2.jpg" alt="casual wear">
+      <h3>casual wear</h3>
+      <p>₹1,499</p>
+    </div>
+
+    <div class="product" data-name="green saree" data-price="₹899" data-image="images/women/women3.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women3.jpg" alt="green saree">
+      <h3>green saree</h3>
+      <p>₹899</p>
+    </div>
+
+    <div class="product" data-name="silk cotton saree" data-price="₹1,099" data-image="images/women/women4.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women4.jpg" alt="silk cotton saree">
+      <h3>silk cotton saree</h3>
+      <p>₹1,099</p>
+    </div>
+
+    <div class="product" data-name="baggy pant" data-price="₹2,299" data-image="images/women/women5.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women5.jpg" alt="baggy pant">
+      <h3>baggy pant</h3>
+      <p>₹2,299</p>
+    </div>
+
+    <div class="product" data-name="round kutri" data-price="₹2,499" data-image="images/women/women6.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women6.jpg" alt="round kutri">
+      <h3>round kutri</h3>
+      <p>₹2,499</p>
+    </div>
+
+    <div class="product" data-name="shorts" data-price="₹3,299" data-image="images/women/women7.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women7.jpg" alt="shorts">
+      <h3>shorts</h3>
+      <p>₹3,299</p>
+    </div>
+
+    <div class="product" data-name="kurta set" data-price="₹3,599" data-image="images/women/women8.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women8.jpg" alt="kurta set">
+      <h3>kurta set</h3>
+      <p>₹3,599</p>
+    </div>
+
+    <div class="product" data-name="jump suit" data-price="₹799" data-image="images/women/women9.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women9.jpg" alt="jump suit">
+      <h3>jump suit</h3>
+      <p>₹799</p>
+    </div>
+
+    <div class="product" data-name="cotton saree" data-price="₹999" data-image="images/women/women10.jpg">
+      <button class="fav-btn">❤️</button>
+      <img src="images/women/women10.jpg" alt="cotton saree">
+      <h3>cotton saree</h3>
+      <p>₹999</p>
+    </div>
+  </div>
+
+  <br>
+  <a href="home.html" class="back-btn-top">← Back</a>
+  
+
+  <script>
+    // Redirect to product details
+    document.querySelectorAll(".product img, .product h3, .product p").forEach(item => {
+      item.addEventListener("click", (e) => {
+        const parent = e.target.closest(".product");
+        const product = {
+          name: parent.dataset.name,
+          price: parent.dataset.price,
+          image: parent.dataset.image
+        };
+        localStorage.setItem("selectedProduct", JSON.stringify(product));
+        window.location.href = "product-details-women.html";
+      });
+    });
+
+    // Add to favourites
+    document.querySelectorAll(".fav-btn").forEach(button => {
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const parent = e.target.closest(".product");
+        const product = {
+          name: parent.dataset.name,
+          price: parent.dataset.price,
+          image: parent.dataset.image
+        };
+        let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
+        const exists = favourites.some(fav => fav.name === product.name);
+        if (!exists) {
+          favourites.push(product);
+          localStorage.setItem("favourites", JSON.stringify(favourites));
+          button.classList.add("active");
+          alert("Added to favourites!");
+        } else {
+          alert("Already in favourites!");
+        }
+      });
+    });
+
+           function goToProfile() {
+      window.location.href = "profile.html";
+    }
+
+    function goToFavourites() {
+      window.location.href = "favourites.html";
+    }
+
+    function goToCart() {
+      window.location.href = "cart.html";
+    }
+    function goToProfile(){
+        window.location.href="profile.html";
+    }
+  </script>
+</body>
+</html>

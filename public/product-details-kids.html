@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details - Kids</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    img {
+      max-width: 300px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: gold;
+      color: black;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2 id="productName"></h2>
+  <img id="productImage" src="" alt="Product Image">
+  <h3 id="productPrice"></h3>
+  <button class="btn" onclick="addToCart()">Add to Cart</button>
+  <br><br>
+  <a href="kids.html" class="btn">← Back to Products</a>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const product = JSON.parse(localStorage.getItem("selectedProduct"));
+      if (!product) {
+        document.body.innerHTML = "<h2>Product not found!</h2>";
+        return;
+      }
+      document.getElementById("productName").textContent = product.name;
+      document.getElementById("productPrice").textContent = product.price;
+      document.getElementById("productImage").src = product.image;
+    });
+
+    function addToCart() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+      const exists = cart.some(item => item.name === product.name);
+      if (!exists) {
+        cart.push(product);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("Product added to cart!");
+      } else {
+        alert("This product is already in the cart!");
+      }
+    }
+  </script>
+</body>
+</html>

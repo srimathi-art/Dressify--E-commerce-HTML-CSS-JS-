@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    img {
+      max-width: 300px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: gold;
+      color: black;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2 id="productName"></h2>
+  <img id="productImage" src="" alt="Product Image">
+  <h3 id="productPrice"></h3>
+  <button class="btn" onclick="addToCart()">Add to Cart</button>
+  <br><br>
+  <a href="men.html" class="btn">← Back to Products</a>
+
+  <script>
+    let currentProduct = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      currentProduct = JSON.parse(localStorage.getItem("selectedProduct"));
+      if (!currentProduct) {
+        document.body.innerHTML = "<h2>Product not found!</h2>";
+        return;
+      }
+      document.getElementById("productName").textContent = currentProduct.name;
+      document.getElementById("productPrice").textContent = currentProduct.price;
+      document.getElementById("productImage").src = currentProduct.image;
+    });
+
+    function addToCart() {
+      if (!currentProduct) return;
+
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      // Check if product already exists in cart
+      const exists = cart.find(item => item.id === currentProduct.id);
+      if (!exists) {
+        cart.push(currentProduct);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("Product added to cart!");
+      } else {
+        alert("Product is already in your cart!");
+      }
+
+      // Optional: redirect to cart page after 1 second
+      setTimeout(() => {
+        window.location.href = "cart.html";
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
+
