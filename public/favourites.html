@@ -1,103 +1,133 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Favourites</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-      color: gold;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .product-card {
-      background: #1a1a1a;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .product-card img {
-      max-width: 100%;
-      border-radius: 6px;
-    }
-    .product-card p {
-      margin: 8px 0;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 12px;
-      background: gold;
-      color: black;
-      text-decoration: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h2>My Favourites</h2>
-  <div class="products" id="favouritesList"></div>
-  <br>
-  <a href="home.html" class="btn">← Back to Home</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Favourites</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        padding: 20px;
+      }
+      h2 {
+        text-align: center;
+        color: gold;
+      }
+      .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .product-card {
+        background: #1a1a1a;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .product-card img {
+        max-width: 100%;
+        border-radius: 6px;
+      }
+      .product-card p {
+        margin: 8px 0;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 12px;
+        background: gold;
+        color: black;
+        text-decoration: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>My Favourites</h2>
+    <div class="products" id="favouritesList"></div>
+    <br />
+    <a href="home.html" class="btn">← Back to Home</a>
+    <script>
+      const user_id = 1; // Example user ID, replace dynamically after login
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      renderFavourites();
-    });
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchFavourites();
+      });
 
-    function renderFavourites() {
-      let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
-      // Filter only valid items
-      favourites = favourites.filter(item => item && item.name && item.price && item.image);
+      async function fetchFavourites() {
+        try {
+          const res = await fetch(
+            `http://localhost:3000/favourites/${user_id}`,
+          );
+          const data = await res.json();
 
-      const container = document.getElementById("favouritesList");
-      container.innerHTML = "";
-
-      if (favourites.length === 0) {
-        container.innerHTML = "<p style='text-align:center;'>No favourite products yet.</p>";
-        return;
+          if (data.status === "success") {
+            renderFavourites(data.favourites);
+          } else {
+            alert("Error loading favourites");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error");
+        }
       }
 
-      favourites.forEach(product => {
-        const card = document.createElement("div");
-        card.classList.add("product-card");
-        card.innerHTML = `
-          <img src="${product.image}" alt="${product.name}">
-          <p>${product.name}</p>
-          <p>${product.price}</p>
-          <button class="btn remove-btn" data-name="${product.name}">Remove</button>
-        `;
-        container.appendChild(card);
-      });
+      function renderFavourites(favourites) {
+        const container = document.getElementById("favouritesList");
+        container.innerHTML = "";
 
-      // Attach remove button events
-      document.querySelectorAll(".remove-btn").forEach(button => {
-        button.addEventListener("click", (e) => {
-          const productName = e.target.getAttribute("data-name");
-          removeFavourite(productName);
+        if (!favourites.length) {
+          container.innerHTML =
+            "<p style='text-align:center;'>No favourite products yet.</p>";
+          return;
+        }
+
+        favourites.forEach((product) => {
+          const card = document.createElement("div");
+          card.classList.add("product-card");
+          card.innerHTML = `
+        <img src="${product.image}" alt="${product.product_name}">
+        <p>${product.product_name}</p>
+        <p>₹${product.price}</p>
+        <button class="btn remove-btn" data-id="${product.id}">Remove</button>
+      `;
+          container.appendChild(card);
         });
-      });
-    }
 
-    function removeFavourite(productName) {
-      let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
-      favourites = favourites.filter(item => item.name !== productName);
-      localStorage.setItem("favourites", JSON.stringify(favourites));
-      renderFavourites(); // Refresh UI instantly
-    }
-  </script>
-</body>
+        // Attach remove button events
+        document.querySelectorAll(".remove-btn").forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const id = e.target.getAttribute("data-id");
+            removeFavourite(id);
+          });
+        });
+      }
+
+      async function removeFavourite(id) {
+        try {
+          const res = await fetch(
+            `http://localhost:3000/remove-from-favourites/${id}`,
+            {
+              method: "DELETE",
+            },
+          );
+          const data = await res.json();
+
+          if (data.status === "success") {
+            fetchFavourites(); // refresh after removal
+          } else {
+            alert("Error removing favourite");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error");
+        }
+      }
+    </script>
+  </body>
 </html>

@@ -1,69 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Product Details - Kids</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    img {
-      max-width: 300px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-    .btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: gold;
-      color: black;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h2 id="productName"></h2>
-  <img id="productImage" src="" alt="Product Image">
-  <h3 id="productPrice"></h3>
-  <button class="btn" onclick="addToCart()">Add to Cart</button>
-  <br><br>
-  <a href="kids.html" class="btn">← Back to Products</a>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const product = JSON.parse(localStorage.getItem("selectedProduct"));
-      if (!product) {
-        document.body.innerHTML = "<h2>Product not found!</h2>";
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details - Kids</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        text-align: center;
+        padding: 20px;
       }
-      document.getElementById("productName").textContent = product.name;
-      document.getElementById("productPrice").textContent = product.price;
-      document.getElementById("productImage").src = product.image;
-    });
-
-    function addToCart() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const product = JSON.parse(localStorage.getItem("selectedProduct"));
-
-      const exists = cart.some(item => item.name === product.name);
-      if (!exists) {
-        cart.push(product);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Product added to cart!");
-      } else {
-        alert("This product is already in the cart!");
+      img {
+        max-width: 300px;
+        border-radius: 8px;
+        margin-top: 20px;
       }
-    }
-  </script>
-</body>
+      .btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: gold;
+        color: black;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 id="productName"></h2>
+    <img id="productImage" src="" alt="Product Image" />
+    <h3 id="productPrice"></h3>
+    <button class="btn" onclick="addToCart()">Add to Cart</button>
+    <br /><br />
+    <a href="kids.html" class="btn">← Back to Products</a>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+        if (!product) {
+          document.body.innerHTML = "<h2>Product not found!</h2>";
+          return;
+        }
+
+        document.getElementById("productName").textContent = product.name;
+        document.getElementById("productPrice").textContent = product.price;
+        document.getElementById("productImage").src = product.image;
+      });
+
+      // 🛒 ADD TO CART (DB)
+      async function addToCart() {
+        const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+        if (!product) {
+          alert("No product found");
+          return;
+        }
+
+        // ✅ TEMP (replace later with logged-in user)
+        const user_id = 1;
+
+        // ✅ Clean price
+        const cleanPrice = product.price.replace(/[₹,]/g, "");
+
+        try {
+          const res = await fetch("http://localhost:3000/add-to-cart", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: user_id,
+              name: product.name,
+              price: cleanPrice,
+              quantity: 1,
+              image: product.image,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (data.status === "success") {
+            alert("Product added to cart!");
+
+           
+          } else {
+            alert("Error adding to cart");
+          }
+        } catch (err) {
+          console.error("❌ Error:", err);
+          alert("Server not responding");
+        }
+      }
+    </script>
+  </body>
 </html>

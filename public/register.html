@@ -4,53 +4,86 @@
   <meta charset="UTF-8">
   <title>Register - Dressify</title>
   <link rel="stylesheet" href="register.css">
-  <script defer src="register.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="register-container">
     <h1 class="title">Register</h1>
-    <form onsubmit="submitForm(event)" class="register-form">
-
+    
+    <!-- ✅ Add ID for JS -->
+    <form id="registerForm" class="register-form">
       <label>Name<span>*</span></label>
       <input type="text" name="name" required>
 
-      <label for="email">Email <span style="color: red">*</span></label>
-      <input type="email" id="email" name="email" required>
-
+      <label>Email<span>*</span></label>
+      <input type="email" name="email" required>
 
       <label>Password<span>*</span></label>
       <div class="password-box">
         <input type="password" name="password" id="password" required>
-        <span class="toggle-eye" onclick="togglePassword()">👁️</span>
+        <span class="toggle-eye" onclick="togglePassword()" style="cursor:pointer;">👁️</span>
       </div>
 
       <button type="submit">Register</button>
     </form>
+
     <div class="login-link">
-  Already have an account? <a href="login.html">Login here</a>
-</div>
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
   </div>
-  
 
   <script>
-  async function submitForm(event) {
-    event.preventDefault();
-    const name = document.querySelector('input[name="name"]').value;
-    const email = document.querySelector('input[name="email"]').value;
-    const password = document.querySelector('input[name="password"]').value;
+    // Wait for DOM
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("registerForm");
 
-    const response = await fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = form.querySelector('input[name="name"]').value.trim();
+        const email = form.querySelector('input[name="email"]').value.trim();
+        const password = form.querySelector('input[name="password"]').value;
+
+        if (!name || !email || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:3000/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password })
+          });
+
+          const result = await response.text();
+
+          if (response.ok) {
+            alert("✅ Registration successful!");
+            form.reset();
+            window.location.href = "login.html";
+          } else {
+            alert("❌ " + result);
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          alert("❌ Failed to connect to server");
+        }
+      });
     });
 
-    const result = await response.text();
-    alert(result);
-    if (response.status === 200) window.location.href = "login.html";
-  }
-</script>
-
+    // Toggle password visibility
+    function togglePassword() {
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.querySelector(".toggle-eye");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.textContent = "🙈";
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.textContent = "👁️";
+      }
+    }
+  </script>
 </body>
 </html>

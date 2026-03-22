@@ -1,227 +1,240 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .cart-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #222;
-      margin: 15px auto;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 700px;
-    }
-    .cart-item img {
-      width: 100px;
-      border-radius: 8px;
-    }
-    .item-details {
-      flex: 1;
-      margin-left: 20px;
-      text-align: left;
-    }
-    .item-details h3, .item-details p {
-      margin: 5px 0;
-    }
-    .quantity-container {
-      display: flex;
-      align-items: center;
-      margin-top: 8px;
-    }
-    .quantity-container span {
-      margin: 0 10px;
-      min-width: 20px;
-      display: inline-block;
-      text-align: center;
-    }
-    .btn {
-      padding: 6px 12px;
-      background: gold;
-      color: black;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin: 0 2px;
-    }
-    .remove-btn {
-      background: red;
-      color: white;
-    }
-    .billing-title {
-      font-size: 20px;
-      margin-top: 40px;
-      font-weight: bold;
-    }
-    .billing-item {
-      background: #222;
-      max-width: 700px;
-      margin: 10px auto;
-      padding: 10px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .total {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .back-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: gold;
-      color: black;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .cart-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #222;
+        margin: 15px auto;
+        padding: 15px;
+        border-radius: 8px;
+        max-width: 700px;
+      }
+      .cart-item img {
+        width: 100px;
+        border-radius: 8px;
+      }
+      .item-details {
+        flex: 1;
+        margin-left: 20px;
+        text-align: left;
+      }
+      .item-details h3,
+      .item-details p {
+        margin: 5px 0;
+      }
+      .quantity-container {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .quantity-container span {
+        margin: 0 10px;
+        min-width: 20px;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn {
+        padding: 6px 12px;
+        background: gold;
+        color: black;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 0 2px;
+      }
+      .remove-btn {
+        background: red;
+        color: white;
+      }
+      .billing-title {
+        font-size: 20px;
+        margin-top: 40px;
+        font-weight: bold;
+      }
+      .billing-item {
+        background: #222;
+        max-width: 700px;
+        margin: 10px auto;
+        padding: 10px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .total {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .back-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: gold;
+        color: black;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Your Cart</h1>
+    <div id="cartContainer"></div>
 
-  <h1>Your Cart</h1>
-  <div id="cartContainer"></div>
+    <!-- Billing Section -->
+    <div class="billing-title">Billing Summary</div>
+    <div id="billingContainer"></div>
+    <div class="total" id="grandTotal">Grand Total: ₹0</div>
 
-  <!-- Billing Section -->
-  <div class="billing-title">Billing Summary</div>
-  <div id="billingContainer"></div>
-  <div class="total" id="grandTotal">Grand Total: ₹0</div>
+    <a href="home.html" class="back-btn">← Continue Shopping</a>
 
-  <a href="home.html" class="back-btn">← Continue Shopping</a>
+    <script>
+      const user_id = 1;
 
-  <script>
-    function renderCart() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const cartContainer = document.getElementById("cartContainer");
-      const billingContainer = document.getElementById("billingContainer");
+      // Fetch cart items from backend
+      async function fetchCart() {
+        try {
+          const res = await fetch(`http://localhost:3000/cart/${user_id}`);
+          const data = await res.json();
+          if (data.status === "success") {
+            renderCart(data.cart);
+          } else {
+            alert("Error loading cart");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error");
+        }
+      }
 
-      cartContainer.innerHTML = "";
-      billingContainer.innerHTML = "";
+      // Render cart and billing
+      function renderCart(cart) {
+        const cartContainer = document.getElementById("cartContainer");
+        const billingContainer = document.getElementById("billingContainer");
+        cartContainer.innerHTML = "";
+        billingContainer.innerHTML = "";
 
-      let grandTotal = 0;
+        let grandTotal = 0;
 
-      cart.forEach((product, index) => {
-        let quantity = product.quantity || 1;
-        let priceNum = parseFloat(product.price.replace(/[₹,]/g, ""));
-        let subtotal = priceNum * quantity;
-        grandTotal += subtotal;
+        cart.forEach(product => {
+          const { id, product_name, price, quantity, image } = product;
+          const subtotal = price * quantity;
+          grandTotal += subtotal;
 
-        // Cart Item Display
-        const cartItem = document.createElement("div");
-        cartItem.classList.add("cart-item");
+          // Cart item
+          const cartItem = document.createElement("div");
+          cartItem.classList.add("cart-item");
 
-        const img = document.createElement("img");
-        img.src = product.image;
-        img.alt = product.name;
+          const img = document.createElement("img");
+          img.src = image;
 
-        const details = document.createElement("div");
-        details.classList.add("item-details");
-        const name = document.createElement("h3");
-        name.textContent = product.name;
-        const price = document.createElement("p");
-        price.textContent = product.price;
+          const details = document.createElement("div");
+          details.classList.add("item-details");
 
-        // Quantity controls
-        const quantityContainer = document.createElement("div");
-        quantityContainer.classList.add("quantity-container");
-        const minusBtn = document.createElement("button");
-        minusBtn.textContent = "–";
-        minusBtn.classList.add("btn");
-        minusBtn.addEventListener("click", () => updateQuantity(index, -1));
-        const qtySpan = document.createElement("span");
-        qtySpan.textContent = quantity;
-        const plusBtn = document.createElement("button");
-        plusBtn.textContent = "+";
-        plusBtn.classList.add("btn");
-        plusBtn.addEventListener("click", () => updateQuantity(index, 1));
-        quantityContainer.appendChild(minusBtn);
-        quantityContainer.appendChild(qtySpan);
-        quantityContainer.appendChild(plusBtn);
+          const nameEl = document.createElement("h3");
+          nameEl.textContent = product_name;
 
-        details.appendChild(name);
-        details.appendChild(price);
-        details.appendChild(quantityContainer);
+          const priceEl = document.createElement("p");
+          priceEl.textContent = "₹" + price.toLocaleString();
 
-        // Remove button
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "Remove";
-        removeBtn.classList.add("btn", "remove-btn");
-        removeBtn.addEventListener("click", () => removeItem(index));
+          // Quantity controls
+          const quantityContainer = document.createElement("div");
+          quantityContainer.classList.add("quantity-container");
 
-        cartItem.appendChild(img);
-        cartItem.appendChild(details);
-        cartItem.appendChild(removeBtn);
-        cartContainer.appendChild(cartItem);
+          const minusBtn = document.createElement("button");
+          minusBtn.textContent = "–";
+          minusBtn.classList.add("btn");
+          minusBtn.onclick = () => updateQuantity(id, -1);
 
-        // Billing Summary
-        const billingItem = document.createElement("div");
-        billingItem.classList.add("billing-item");
-        billingItem.innerHTML = `
-          <span>${product.name}</span>
-          <span>₹${priceNum.toLocaleString()}</span>
-          <span>Qty: ${quantity}</span>
-          <span>Subtotal: ₹${subtotal.toLocaleString()}</span>
-        `;
-        billingContainer.appendChild(billingItem);
-      });
+          const qtySpan = document.createElement("span");
+          qtySpan.textContent = quantity;
 
-      document.getElementById("grandTotal").textContent = `Grand Total: ₹${grandTotal.toLocaleString()}`;
-    }
+          const plusBtn = document.createElement("button");
+          plusBtn.textContent = "+";
+          plusBtn.classList.add("btn");
+          plusBtn.onclick = () => updateQuantity(id, 1);
 
-      function updateQuantity(index, change) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cart[index].quantity = (cart[index].quantity || 1) + change;
-  if (cart[index].quantity < 1) cart[index].quantity = 1;
+          quantityContainer.append(minusBtn, qtySpan, plusBtn);
+          details.append(nameEl, priceEl, quantityContainer);
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+          // Remove button
+          const removeBtn = document.createElement("button");
+          removeBtn.textContent = "Remove";
+          removeBtn.classList.add("btn", "remove-btn");
+          removeBtn.onclick = () => removeItem(id);
 
-  // 🚀 Send update to DB
-  saveItemToDB(cart[index]);
+          cartItem.append(img, details, removeBtn);
+          cartContainer.appendChild(cartItem);
 
-  renderCart();
-}
- 
+          // Billing item
+          const billingItem = document.createElement("div");
+          billingItem.classList.add("billing-item");
+          billingItem.innerHTML = `
+            <span>${product_name}</span>
+            <span>₹${price}</span>
+            <span>Qty: ${quantity}</span>
+            <span>Subtotal: ₹${subtotal}</span>
+          `;
+          billingContainer.appendChild(billingItem);
+        });
 
+        document.getElementById("grandTotal").textContent =
+          "Grand Total: ₹" + grandTotal;
+      }
 
-    function removeItem(index) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      cart.splice(index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      renderCart();
-    }
+      // Update quantity
+      async function updateQuantity(id, change) {
+        try {
+          const res = await fetch("http://localhost:3000/update-cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, change }),
+          });
+          const data = await res.json();
+          if (data.status === "success") {
+            fetchCart();
+          } else {
+            alert("Failed to update quantity");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error");
+        }
+      }
 
-    renderCart();
+      // Remove item
+      async function removeItem(id) {
+        try {
+          const res = await fetch(`http://localhost:3000/remove-from-cart/${id}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (data.status === "success") {
+            fetchCart();
+          } else {
+            alert("Failed to remove item");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error");
+        }
+      }
 
-    function saveItemToDB(product) {
-  fetch("http://localhost:5000/add-to-cart", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: product.name,
-      price: parseFloat(product.price.replace(/[₹,]/g, "")),
-      quantity: product.quantity,
-      image: product.image
-    })
-  })
-  .then(res => res.json())
-  .then(data => console.log("DB Response:", data))
-  .catch(err => console.error("Error:", err));
-}
-
-
-  </script>
-
-</body>
+      // Initial fetch
+      fetchCart();
+    </script>
+  </body>
 </html>

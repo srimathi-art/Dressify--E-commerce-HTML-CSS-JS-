@@ -194,59 +194,76 @@
   <br>
   <a href="home.html" class="back-btn-top">← Back</a>
   
+<script>
+// Redirect to product details (KEEP SAME)
+document.querySelectorAll(".product img, .product h3, .product p").forEach(item => {
+  item.addEventListener("click", (e) => {
+    const parent = e.target.closest(".product");
+    const product = {
+      name: parent.dataset.name,
+      price: parent.dataset.price,
+      image: parent.dataset.image
+    };
+    localStorage.setItem("selectedProduct", JSON.stringify(product));
+    window.location.href = "product-details-women.html";
+  });
+});
 
-  <script>
-    // Redirect to product details
-    document.querySelectorAll(".product img, .product h3, .product p").forEach(item => {
-      item.addEventListener("click", (e) => {
-        const parent = e.target.closest(".product");
-        const product = {
-          name: parent.dataset.name,
-          price: parent.dataset.price,
-          image: parent.dataset.image
-        };
-        localStorage.setItem("selectedProduct", JSON.stringify(product));
-        window.location.href = "product-details-women.html";
+
+document.querySelectorAll(".fav-btn").forEach(button => {
+  button.addEventListener("click", async (e) => {
+    e.stopPropagation();
+
+    const parent = e.target.closest(".product");
+
+    const rawPrice = parent.dataset.price;
+    const cleanPrice = rawPrice.replace(/[₹,]/g, ""); // remove ₹ and commas
+
+    const product = {
+      user_id: 1, // replace with logged-in user later
+      name: parent.dataset.name,
+      price: cleanPrice,
+      image: parent.dataset.image
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/add-to-favourites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(product)
       });
-    });
 
-    // Add to favourites
-    document.querySelectorAll(".fav-btn").forEach(button => {
-      button.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const parent = e.target.closest(".product");
-        const product = {
-          name: parent.dataset.name,
-          price: parent.dataset.price,
-          image: parent.dataset.image
-        };
-        let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
-        const exists = favourites.some(fav => fav.name === product.name);
-        if (!exists) {
-          favourites.push(product);
-          localStorage.setItem("favourites", JSON.stringify(favourites));
-          button.classList.add("active");
-          alert("Added to favourites!");
-        } else {
-          alert("Already in favourites!");
-        }
-      });
-    });
+      const data = await res.json();
 
-           function goToProfile() {
-      window.location.href = "profile.html";
-    }
+      if (data.status === "success") {
+        button.classList.add("active");
+        alert("Added to favourites ❤️");
+      } else {
+        alert("Error adding to favourites");
+      }
 
-    function goToFavourites() {
-      window.location.href = "favourites.html";
+    } catch (err) {
+      console.error("❌ Fetch error:", err);
+      alert("Server not responding");
     }
+  });
+});
 
-    function goToCart() {
-      window.location.href = "cart.html";
-    }
-    function goToProfile(){
-        window.location.href="profile.html";
-    }
-  </script>
+
+// Navigation (UNCHANGED)
+function goToProfile() {
+  window.location.href = "profile.html";
+}
+
+function goToFavourites() {
+  window.location.href = "favourites.html";
+}
+
+function goToCart() {
+  window.location.href = "cart.html";
+}
+</script>
 </body>
 </html>

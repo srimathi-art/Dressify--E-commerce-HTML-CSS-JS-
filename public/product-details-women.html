@@ -39,34 +39,61 @@
   <br><br>
   <a href="women.html" class="btn">← Back to Products</a>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const product = JSON.parse(localStorage.getItem("selectedProduct"));
-      if (!product) {
-        document.body.innerHTML = "<h2>Product not found!</h2>";
-        return;
-      }
-      document.getElementById("productName").textContent = product.name;
-      document.getElementById("productPrice").textContent = product.price;
+ <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const product = JSON.parse(localStorage.getItem("selectedProduct"));
 
-      // Fix image display by ensuring path matches actual image
-      document.getElementById("productImage").src = product.image;
-      document.getElementById("productImage").alt = product.name;
+  if (!product) {
+    document.body.innerHTML = "<h2>Product not found!</h2>";
+    return;
+  }
+
+  document.getElementById("productName").textContent = product.name;
+  document.getElementById("productPrice").textContent = product.price;
+
+  document.getElementById("productImage").src = product.image;
+  document.getElementById("productImage").alt = product.name;
+});
+
+
+async function addToCart() {
+  const product = JSON.parse(localStorage.getItem("selectedProduct"));
+
+  if (!product) {
+    alert("No product found");
+    return;
+  }
+
+  const cleanPrice = product.price.replace(/[₹,]/g, "");
+
+  try {
+    const res = await fetch("http://localhost:3000/add-to-cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_id: 1,
+        name: product.name,
+        price: cleanPrice,
+        quantity: 1,
+        image: product.image
+      })
     });
 
-    function addToCart() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const product = JSON.parse(localStorage.getItem("selectedProduct"));
+    const data = await res.json();
 
-      const exists = cart.some(item => item.name === product.name);
-      if (!exists) {
-        cart.push(product);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Product added to cart!");
-      } else {
-        alert("This product is already in the cart!");
-      }
+    if (data.status === "success") {
+      alert("Product added to cart (DB)!");
+    } else {
+      alert("Error adding to cart");
     }
-  </script>
+
+  } catch (err) {
+    console.error("❌ Error:", err);
+    alert("Server not responding");
+  }
+}
+</script>
 </body>
 </html>

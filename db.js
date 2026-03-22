@@ -1,10 +1,10 @@
 // db.js
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 const conn = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "*********",
+  password: "G@yuSri32",
   database: "dress_shop_db"
 });
 
